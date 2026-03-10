@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Frame to Code | Learning UX & Figma</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- html2canvas for image export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Main Content Area -->
+      <main id="screen-container">
+        <!-- Screens will be injected here -->
+      </main>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-screen="home">
+          <span class="icon">🏠</span>
+          <span class="label">Home</span>
+        </button>
+        <button class="nav-item" data-screen="library">
+          <span class="icon">📚</span>
+          <span class="label">Library</span>
+        </button>
+        <button class="nav-item" data-screen="study">
+          <span class="icon">🎲</span>
+          <span class="label">Random</span>
+        </button>
+        <button class="nav-item" data-screen="add">
+          <span class="icon">➕</span>
+          <span class="label">Add</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Screen Templates (Hidden) -->
+    <template id="template-home">
+      <section class="screen" id="screen-home">
+        <header class="app-header">
+          <h1>Frame to Code</h1>
+        </header>
+
+        <div class="section-group">
+          <h2 class="section-title">Today Card</h2>
+          <div id="today-card-container"></div>
+        </div>
+
+        <div class="section-group">
+          <h2 class="section-title">Categories</h2>
+          <div class="category-grid">
+            <div class="cat-pill" data-category="UX">UX</div>
+            <div class="cat-pill" data-category="Figma">Figma</div>
+            <div class="cat-pill" data-category="HTML">HTML</div>
+            <div class="cat-pill" data-category="DesignSystem">DS</div>
+            <div class="cat-pill" data-category="Microcopy">Copy</div>
+          </div>
+        </div>
+
+        <div class="section-group">
+          <h2 class="section-title">Recently Viewed</h2>
+          <div id="recent-cards-container" class="horizontal-scroll"></div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="app.startStudy()">
+            Start Random Study
+          </button>
+          <button class="btn btn-secondary" onclick="app.navigateTo('add')">
+            Add New Card
+          </button>
+        </div>
+      </section>
+    </template>
+
+    <template id="template-library">
+      <section class="screen" id="screen-library">
+        <header class="app-header">
+          <h1>Card Library</h1>
+        </header>
+
+        <div class="search-bar">
+          <input
+            type="text"
+            id="library-search"
+            placeholder="Search terms, concepts..."
+          />
+        </div>
+
+        <div class="filter-row">
+          <div class="category-scroll">
+            <button class="filter-chip active" data-cat="all">All</button>
+            <button class="filter-chip" data-cat="UX">UX</button>
+            <button class="filter-chip" data-cat="Figma">Figma</button>
+            <button class="filter-chip" data-cat="HTML">HTML</button>
+            <button class="filter-chip" data-cat="DesignSystem">DS</button>
+          </div>
+        </div>
+
+        <div class="sort-row">
+          <select id="library-sort">
+            <option value="recent">Recent</option>
+            <option value="alphabet">Alphabetical</option>
+            <option value="mostViewed">Most Viewed</option>
+          </select>
+        </div>
+
+        <div id="library-grid" class="card-grid"></div>
+      </section>
+    </template>
+
+    <template id="template-detail">
+      <section class="screen" id="screen-detail">
+        <header class="screen-header">
+          <button class="back-btn" onclick="app.goBack()">←</button>
+          <button id="detail-fav-toggle" class="fav-btn">★</button>
+        </header>
+        <div id="detail-content" class="detail-container"></div>
+        <footer class="detail-footer">
+          <button class="btn btn-secondary" id="btn-export">
+            Export Image
+          </button>
+          <button class="btn btn-ghost" id="btn-edit">Edit Card</button>
+          <button class="btn btn-ghost danger" id="btn-delete">Delete</button>
+        </footer>
+      </section>
+    </template>
+
+    <template id="template-study">
+      <section class="screen" id="screen-study">
+        <header class="app-header">
+          <h1>Quick Study</h1>
+          <div class="session-progress" id="study-progress">Card 1 / 5</div>
+        </header>
+        <div id="study-card-container"></div>
+        <div id="study-actions" class="study-footer hidden">
+          <button class="btn btn-again" onclick="app.answerStudy('again')">
+            Again
+          </button>
+          <button class="btn btn-gotit" onclick="app.answerStudy('gotit')">
+            Got it
+          </button>
+        </div>
+        <div id="study-reveal" class="study-footer">
+          <button class="btn btn-primary" onclick="app.revealStudy()">
+            Reveal Details
+          </button>
+        </div>
+      </section>
+    </template>
+
+    <template id="template-add">
+      <section class="screen" id="screen-add">
+        <header class="app-header">
+          <h1 id="add-screen-title">Add New Card</h1>
+          <button class="close-btn" onclick="app.navigateTo('home')">✕</button>
+        </header>
+        <form id="card-form" class="form-container">
+          <input type="hidden" id="form-id" />
+
+          <div class="form-group">
+            <label>Term</label>
+            <input
+              type="text"
+              id="form-term"
+              required
+              placeholder="e.g. Auto Layout"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>One-line Definition</label>
+            <input
+              type="text"
+              id="form-oneline"
+              required
+              placeholder="Short summary..."
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="form-category">
+                <option value="UX">UX</option>
+                <option value="Figma" selected>Figma</option>
+                <option value="HTML">HTML</option>
+                <option value="DesignSystem">Design System</option>
+                <option value="Microcopy">Microcopy</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Figma Concept</label>
+            <textarea id="form-figma" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>HTML Mapping</label>
+            <input
+              type="text"
+              id="form-html"
+              placeholder="e.g. display: flex"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Key Points (comma separated)</label>
+            <input
+              type="text"
+              id="form-keypoints"
+              placeholder="point 1, point 2, ..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label>My Note</label>
+            <textarea id="form-note" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Tags (comma separated)</label>
+            <input
+              type="text"
+              id="form-tags"
+              placeholder="layout, frame, ..."
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary full-width">
+            Save Card
+          </button>
+        </form>
+      </section>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
