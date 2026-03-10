@@ -160,7 +160,7 @@ class FrameToCode {
         id: "card_design_system",
         term: "Design System",
         oneLine: "Source of truth for design & code",
-        category: "DesignSystem",
+        category: "Design System",
         figmaConcept: "Library of variables and components",
         htmlMapping: "CSS Variables and reusable tokens",
         keyPoints: ["tokens", "documentation", "consistency"],
@@ -343,10 +343,10 @@ class FrameToCode {
   renderCardPreview(card) {
     return `
             <div class="card-preview" data-id="${card.id}">
-                <span class="cat-tag tag-${card.category}">${card.category}</span>
+                <span class="cat-tag tag-${card.category.replace(/\s+/g, '')}">${card.category}</span>
                 <h3>${card.term}</h3>
                 <p class="oneline">${card.oneLine}</p>
-                <span class="mapping">${card.htmlMapping}</span>
+                <span class="mapping">HTML: ${card.htmlMapping}</span>
             </div>
         `;
   }
@@ -425,10 +425,9 @@ class FrameToCode {
 
     content.innerHTML = `
             <div id="export-target">
-                <div class="detail-header">
-                    <span class="cat-tag tag-${card.category}">${card.category}</span>
+                <div class="detail-header" style="padding: 0 0 24px 0;">
                     <h1>${card.term}</h1>
-                    <p class="oneline">${card.oneLine}</p>
+                    <p class="oneline" style="margin-top:4px;">${card.oneLine}</p>
                 </div>
 
                 <div class="detail-section">
@@ -591,8 +590,11 @@ class FrameToCode {
                     </div>
                     <div id="study-back" class="hidden" style="width:100%">
                         <div class="detail-section">
-                            <h4>Figma & HTML</h4>
+                            <h4>Figma Concept</h4>
                             <p>${card.figmaConcept}</p>
+                        </div>
+                        <div class="detail-section">
+                            <h4>HTML Mapping</h4>
                             <p><code>${card.htmlMapping}</code></p>
                         </div>
                         <div class="detail-section">
@@ -601,8 +603,11 @@ class FrameToCode {
                                 ${card.keyPoints.map((p) => `<span class="point">${p}</span>`).join("")}
                             </div>
                         </div>
-                        ${card.visual ? `<img src="${card.visual}" style="width:100%; border-radius:8px; margin-top:10px;">` : ""}
-                        ${card.myNote ? `<p style="margin-top:15px; font-style:italic;">"${card.myNote}"</p>` : ""}
+                        ${card.myNote ? `
+                        <div class="detail-section">
+                            <h4>My Note</h4>
+                            <p style="font-style:italic;">"${card.myNote}"</p>
+                        </div>` : ""}
                     </div>
                 </div>
             </div>

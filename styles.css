@@ -177,13 +177,9 @@ body {
 }
 
 .card-preview .mapping {
-  font-size: 10px;
-  font-family: monospace;
-  background: var(--primary-light);
-  color: var(--primary);
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-top: auto;
+  font-size: 11px;
+  color: var(--subtext);
+  margin-top: 4px;
 }
 
 /* Section Groups */
@@ -271,18 +267,19 @@ body {
 
 .detail-section {
   background: var(--card);
-  border-radius: var(--radius-md);
-  padding: 20px;
+  border-radius: 12px;
+  padding: 16px;
   margin-bottom: 16px;
   box-shadow: var(--shadow);
 }
 
 .detail-section h4 {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: var(--subtext);
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b6b6b;
   margin-bottom: 8px;
-  letter-spacing: 0.5px;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .detail-section .content {
